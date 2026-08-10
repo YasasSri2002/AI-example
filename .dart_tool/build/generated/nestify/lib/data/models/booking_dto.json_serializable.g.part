@@ -1,0 +1,67 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+BookingRequestDto _$BookingRequestDtoFromJson(Map<String, dynamic> json) =>
+    BookingRequestDto(
+      name: json['name'] as String,
+      email: json['email'] as String,
+      contactNo: json['contactNo'] as String,
+      address: json['address'] as String,
+      additionalInformation: json['additionalInformation'] as String?,
+      status: json['status'] as String? ?? 'pending',
+      startingTime: json['startingTime'] as String,
+      startingDate: json['startingDate'] as String,
+      providerId: json['providerId'] as String,
+      gigId: json['gigId'] as String,
+    );
+
+Map<String, dynamic> _$BookingRequestDtoToJson(BookingRequestDto instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'email': instance.email,
+      'contactNo': instance.contactNo,
+      'address': instance.address,
+      'additionalInformation': instance.additionalInformation,
+      'status': instance.status,
+      'startingTime': instance.startingTime,
+      'startingDate': instance.startingDate,
+      'providerId': instance.providerId,
+      'gigId': instance.gigId,
+    };
+
+BookingResponseDto _$BookingResponseDtoFromJson(Map<String, dynamic> json) =>
+    BookingResponseDto(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      email: json['email'] as String?,
+      contactNo: json['contactNo'] as String?,
+      address: json['address'] as String?,
+      additionalInformation: json['additionalInformation'] as String?,
+      status: json['status'] as String,
+      startingTime: json['startingTime'] as String?,
+      startingDate: json['startingDate'] as String?,
+      providerDto: json['providerDto'] == null
+          ? null
+          : ProviderDto.fromJson(json['providerDto'] as Map<String, dynamic>),
+      serviceGigResponseDto: json['serviceGigResponseDto'] == null
+          ? null
+          : ServiceGigResponseDto.fromJson(
+              json['serviceGigResponseDto'] as Map<String, dynamic>,
+            ),
+    );
+
+Map<String, dynamic> _$BookingResponseDtoToJson(BookingResponseDto instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'email': instance.email,
+      'contactNo': instance.contactNo,
+      'address': instance.address,
+      'additionalInformation': instance.additionalInformation,
+      'status': instance.status,
+      'startingTime': instance.startingTime,
+      'startingDate': instance.startingDate,
+      'providerDto': instance.providerDto,
+      'serviceGigResponseDto': instance.serviceGigResponseDto,
+    };

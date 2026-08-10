@@ -1,0 +1,45 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+UserResponseDto _$UserResponseDtoFromJson(Map<String, dynamic> json) =>
+    UserResponseDto(
+      id: json['id'] as String,
+      address: json['address'] as String?,
+      contact: json['contact'] as String?,
+      email: json['email'] as String?,
+      paymentMethod: json['paymentMethod'] as String?,
+      firstName: json['firstName'] as String?,
+      lastName: json['lastName'] as String?,
+      username: json['username'] as String?,
+      createdAt: json['createdAt'] as String?,
+    );
+
+Map<String, dynamic> _$UserResponseDtoToJson(UserResponseDto instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'address': instance.address,
+      'contact': instance.contact,
+      'email': instance.email,
+      'paymentMethod': instance.paymentMethod,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      'username': instance.username,
+      'createdAt': instance.createdAt,
+    };
+
+UserDto _$UserDtoFromJson(Map<String, dynamic> json) => UserDto(
+  id: json['id'] as String?,
+  firstName: json['firstName'] as String?,
+  lastName: json['lastName'] as String?,
+  username: json['username'] as String?,
+  email: json['email'] as String?,
+);
+
+Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
+  'id': instance.id,
+  'firstName': instance.firstName,
+  'lastName': instance.lastName,
+  'username': instance.username,
+  'email': instance.email,
+};

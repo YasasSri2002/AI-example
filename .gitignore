@@ -1,0 +1,7 @@
+.agents/
+.claude/
+planning/
+.mcp.json
+
+# FVM Version Cache
+.fvm/

@@ -1,0 +1,43 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+ReviewDto _$ReviewDtoFromJson(Map<String, dynamic> json) => ReviewDto(
+  id: json['id'] as String?,
+  rating: (json['rating'] as num).toInt(),
+  comment: json['comment'] as String?,
+  providerResponse: json['providerResponse'] as String?,
+  reviewsClient: json['reviewsClient'] == null
+      ? null
+      : UserDto.fromJson(json['reviewsClient'] as Map<String, dynamic>),
+  createdAt: json['createdAt'] == null
+      ? null
+      : DateTime.parse(json['createdAt'] as String),
+);
+
+Map<String, dynamic> _$ReviewDtoToJson(ReviewDto instance) => <String, dynamic>{
+  'id': instance.id,
+  'rating': instance.rating,
+  'comment': instance.comment,
+  'providerResponse': instance.providerResponse,
+  'reviewsClient': instance.reviewsClient,
+  'createdAt': instance.createdAt?.toIso8601String(),
+};
+
+ReviewRequestDto _$ReviewRequestDtoFromJson(Map<String, dynamic> json) =>
+    ReviewRequestDto(
+      rating: (json['rating'] as num).toInt(),
+      comment: json['comment'] as String,
+      serviceGigId: json['serviceGigId'] as String?,
+      providerId: json['providerId'] as String,
+      clientId: json['clientId'] as String?,
+    );
+
+Map<String, dynamic> _$ReviewRequestDtoToJson(ReviewRequestDto instance) =>
+    <String, dynamic>{
+      'rating': instance.rating,
+      'comment': instance.comment,
+      'serviceGigId': instance.serviceGigId,
+      'providerId': instance.providerId,
+      'clientId': instance.clientId,
+    };

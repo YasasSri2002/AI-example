@@ -1,0 +1,14 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'category_dto.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+CategoryResponseDto _$CategoryResponseDtoFromJson(Map<String, dynamic> json) =>
+    CategoryResponseDto(id: json['id'] as String, name: json['name'] as String);
+
+Map<String, dynamic> _$CategoryResponseDtoToJson(
+  CategoryResponseDto instance,
+) => <String, dynamic>{'id': instance.id, 'name': instance.name};
