@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../core/constants/api_constants.dart';
 import '../../core/network/dio_client.dart';
+import '../datasources/local/dummy_data.dart';
 import '../models/provider_dto.dart';
 
 /// Repository for handling service provider operations.
@@ -9,10 +10,17 @@ import '../models/provider_dto.dart';
 /// Communicates with the Spring Boot REST API for all provider-related queries.
 class ProviderRepository {
   /// Fetches a paginated list of all providers with their categories.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, returns a paged slice of the
+  /// in-memory dummy providers.
   Future<List<ProviderWithCategory>> getAllProviders({
     int page = 0,
     int size = 10,
   }) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.providersPage(page: page, size: size);
+    }
+
     try {
       final response = await DioClient.instance.get(
         ApiConstants.providerAll,
@@ -51,7 +59,14 @@ class ProviderRepository {
   }
 
   /// Fetches total page count for providers (for pagination).
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, derives the page count from
+  /// the dummy provider set.
   Future<int> getProvidersTotalPages({int size = 10}) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.providersTotalPages(size: size);
+    }
+
     try {
       final response = await DioClient.instance.get(
         ApiConstants.providerAll,
@@ -74,7 +89,14 @@ class ProviderRepository {
   }
 
   /// Fetches a single provider by [id] with categories, reviews, and rating.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, returns the dummy provider
+  /// matching [id] (or `null` if none exists).
   Future<ProviderWithCategory?> getProviderById(String id) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.providerById(id);
+    }
+
     try {
       final response =
           await DioClient.instance.get('${ApiConstants.providerById}/$id');
@@ -93,7 +115,14 @@ class ProviderRepository {
   }
 
   /// Fetches a list of popular/featured providers.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, returns the top-rated dummy
+  /// providers.
   Future<List<ProviderWithCategory>> getPopularProviders() async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.popularProviders;
+    }
+
     try {
       final response =
           await DioClient.instance.get(ApiConstants.providerPopular);
@@ -117,7 +146,14 @@ class ProviderRepository {
   }
 
   /// Fetches the total count of registered providers.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, returns the count of dummy
+  /// providers.
   Future<int> getProviderCount() async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.providerCount;
+    }
+
     try {
       final response =
           await DioClient.instance.get(ApiConstants.providerCount);
@@ -137,7 +173,14 @@ class ProviderRepository {
   }
 
   /// Registers a new provider.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, creates and returns a dummy
+  /// [ProviderDto] built from [data].
   Future<ProviderDto?> registerProvider(Map<String, dynamic> data) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.registerProvider(data);
+    }
+
     try {
       final response = await DioClient.instance.post(
         ApiConstants.providerPersist,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../core/constants/api_constants.dart';
 import '../../core/network/dio_client.dart';
+import '../datasources/local/dummy_data.dart';
 import '../models/review_dto.dart';
 
 /// Repository for handling service review operations.
@@ -12,7 +13,14 @@ class ReviewRepository {
   /// Fetches all reviews for a service gig identified by [gigId].
   ///
   /// Corresponds to: GET `/review/by-gig-id?id={gigId}`
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, returns the dummy reviews
+  /// associated with the gig.
   Future<List<ReviewDto>> getReviewsByGigId(String gigId) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.reviewsByGigId(gigId);
+    }
+
     try {
       final response = await DioClient.instance.get(
         ApiConstants.reviewByGigId,
@@ -53,7 +61,14 @@ class ReviewRepository {
   ///
   /// Corresponds to: POST `/review/add-review`
   /// Returns the created [ReviewDto] if successful, `null` otherwise.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, appends the review to the
+  /// in-memory store and returns the created DTO.
   Future<ReviewDto?> addReview(ReviewRequestDto review) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.addReview(review);
+    }
+
     try {
       final response = await DioClient.instance.post(
         ApiConstants.reviewAdd,

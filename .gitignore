@@ -5,3 +5,5 @@ planning/
 
 # FVM Version Cache
 .fvm/
+AGENTS.md
+CLAUDE.md

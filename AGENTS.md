@@ -1056,12 +1056,186 @@ assets/
 
 ## Rule 13: Git & Code Quality
 
-- Commit messages: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:` prefixes.
-- Run before every commit:
-  ```bash
-  fvm flutter analyze    # zero warnings
-  fvm flutter test       # all tests pass
-  fvm dart format .      # consistent formatting
-  ```
-- Never commit generated files (`*.g.dart`, `*.freezed.dart`) — add them to `.gitignore` and generate on build.
-- Keep `pubspec.lock` committed.
+### Git Rules
+
+* Use commit message prefixes when suggesting commit messages:
+
+  * `feat:` — new feature
+  * `fix:` — bug fix
+  * `refactor:` — code restructuring
+  * `chore:` — maintenance
+  * `docs:` — documentation-only changes
+
+* **NEVER create a Git commit automatically.**
+
+* **NEVER run `git commit` unless the user explicitly asks you to commit.**
+
+* **NEVER run `git push` automatically.**
+
+* The user is responsible for reviewing changes and deciding when to commit and push.
+
+* After completing a task, show the user what was changed and leave the working tree ready for review.
+
+* If useful, provide a suggested commit message, but do not execute the commit.
+
+### Code Quality Before Completion
+
+Run the appropriate validation commands after making changes:
+
+```bash
+fvm flutter analyze
+fvm flutter test
+fvm dart format .
+```
+
+* `fvm flutter analyze` must have zero warnings/errors.
+* `fvm flutter test` must pass.
+* `fvm dart format .` must be applied to maintain consistent formatting.
+* Fix issues discovered during validation before considering the implementation successful.
+
+### Generated Files
+
+* Never manually commit generated files such as:
+
+  * `*.g.dart`
+  * `*.freezed.dart`
+* Add generated files to `.gitignore` when appropriate.
+* Generated files may be created locally by build/code-generation commands.
+* Keep `pubspec.lock` committed.
+
+### Completion Flow
+
+The agent must follow this sequence:
+
+```text
+Implement change
+      ↓
+Run validation
+      ↓
+Fix any issues
+      ↓
+Confirm implementation works
+      ↓
+Update README.md if required
+      ↓
+Validate README.md
+      ↓
+Show changes to user
+      ↓
+STOP — DO NOT COMMIT
+```
+
+**The agent's job is to implement and validate the changes.
+The user's job is to review, commit, and push the changes.**
+--
+
+## Rule 14: README Maintenance
+
+**MANDATORY: Always keep `README.md` synchronized with the actual project state.**
+
+After **every successful change**, feature implementation, bug fix, refactor, configuration change, dependency change, architectural change, or meaningful UI change, the agent MUST review and update `README.md` if the change affects the documented project state.
+
+### Required Workflow
+
+After successfully completing a change:
+
+1. **Verify the implementation**
+
+   * Confirm the requested change is actually working.
+   * Run the relevant tests, analyzer, formatter, or other validation required for the change.
+   * Do NOT update the README for a change that has not been successfully implemented.
+
+2. **Review the current `README.md`**
+
+   * Check whether the change is already documented.
+   * Identify sections that are now outdated or incomplete.
+   * Preserve the existing README structure and writing style.
+
+3. **Update `README.md`**
+
+   * Add newly implemented features.
+   * Update completed items in feature checklists.
+   * Update setup or installation instructions when dependencies/configuration change.
+   * Update folder structure when new important directories/files are introduced.
+   * Update architecture or technical documentation when the implementation changes the architecture.
+   * Update API information when endpoints or API behavior change.
+   * Update configuration/environment-variable documentation when required.
+   * Remove or correct documentation that is no longer accurate.
+
+4. **Keep documentation factual**
+
+   * Document only functionality that has actually been implemented.
+   * Do NOT mark unfinished, experimental, or broken functionality as completed.
+   * Do NOT invent features, APIs, configurations, or implementation details.
+   * If something is partially implemented, clearly describe it as partial/in progress.
+
+5. **Keep the README concise**
+
+   * Do not dump implementation details or large code blocks into the README unless they are necessary.
+   * Prefer short explanations, tables, checklists, and examples.
+   * Keep detailed implementation knowledge in the appropriate documentation files.
+
+6. **Validate the README**
+
+   * Check Markdown formatting.
+   * Check that file paths, commands, package names, and configuration examples are accurate.
+   * Make sure newly added documentation does not contradict the actual implementation.
+
+### README Update Checklist
+
+For every successful change, ask:
+
+* [ ] Does this change introduce a new feature?
+* [ ] Does this change complete an existing feature?
+* [ ] Does this change modify an existing feature?
+* [ ] Does this change affect setup or installation?
+* [ ] Does this change add/remove a dependency?
+* [ ] Does this change modify the project structure?
+* [ ] Does this change modify an API or integration?
+* [ ] Does this change modify authentication, authorization, or routing?
+* [ ] Does this change modify the architecture?
+* [ ] Does this change require new configuration or environment variables?
+* [ ] Does the README need to be updated?
+
+If **any answer is YES**, update `README.md` before considering the task complete.
+
+### Important Rule
+
+**A successful implementation is NOT considered complete until the corresponding `README.md` documentation has also been updated when documentation is affected.**
+
+The normal completion sequence is:
+
+```text
+Implement change
+      ↓
+Run validation
+      ↓
+Confirm change works
+      ↓
+Review README.md
+      ↓
+Update README.md if required
+      ↓
+Validate README.md
+      ↓
+Task complete
+```
+
+### Git Convention
+
+When the README is updated as part of a feature or fix, keep the documentation change with the related implementation change unless there is a specific reason to separate it.
+
+Use the existing commit conventions:
+
+```text
+feat: add booking cancellation
+fix: resolve provider loading issue
+refactor: simplify authentication flow
+docs: update README
+```
+
+If the README update is directly part of the same feature/fix, it may remain within the same commit:
+
+```text
+feat: add booking cancellation and update documentation
+```

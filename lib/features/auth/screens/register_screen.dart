@@ -69,6 +69,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         body['contactNo'] = _contactNoController.text.trim();
       }
 
+      if (ApiConstants.useMockApi) {
+        // Simulate network latency for the demo.
+        await Future<void>.delayed(const Duration(milliseconds: 600));
+        if (!mounted) return;
+        _showSuccessDialog();
+        return;
+      }
+
       final response = await DioClient.instance.post(endpoint, data: body);
 
       if (!mounted) return;

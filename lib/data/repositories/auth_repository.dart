@@ -5,11 +5,17 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../core/constants/api_constants.dart';
 import '../../core/network/dio_client.dart';
+import '../../data/datasources/local/dummy_data.dart';
 
 /// Repository handling all authentication operations via Keycloak OAuth 2.0.
 ///
 /// Uses [FlutterAppAuth] for the Authorization Code flow and
 /// [FlutterSecureStorage] for secure token persistence.
+///
+/// When [ApiConstants.useMockApi] is enabled, the OAuth flow is bypassed and
+/// a locally-generated, non-expired JWT is stored instead — so auth state
+/// checks ([isAuthenticated], [getUserRoles], etc.) continue to work without
+/// a running Keycloak server.
 class AuthRepository {
   AuthRepository({
     FlutterAppAuth? appAuth,
@@ -37,7 +43,15 @@ class AuthRepository {
   /// Opens the system browser for Keycloak login, then handles the
   /// callback and stores the returned tokens.
   /// Returns `true` if login was successful.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, bypasses OAuth and stores a
+  /// dummy JWT instead.
   Future<bool> login() async {
+    if (ApiConstants.useMockApi) {
+      await _storeDummyTokens();
+      return true;
+    }
+
     try {
       final result = await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
@@ -73,7 +87,15 @@ class AuthRepository {
   /// Exchanges an authorization code for tokens.
   ///
   /// Used when handling the OAuth callback manually.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, stores a dummy JWT and
+  /// returns `true`.
   Future<bool> handleCallback(String authorizationCode) async {
+    if (ApiConstants.useMockApi) {
+      await _storeDummyTokens();
+      return true;
+    }
+
     try {
       final response = await DioClient.instance.post(
         ApiConstants.authCallback,
@@ -103,7 +125,15 @@ class AuthRepository {
   // ──────────────────────────────────────────────
 
   /// Clears all stored tokens and calls backend logout.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, only local tokens are cleared
+  /// (no backend call).
   Future<void> logout() async {
+    if (ApiConstants.useMockApi) {
+      await _clearTokens();
+      return;
+    }
+
     try {
       final idToken = await _secureStorage.read(key: _idTokenKey);
 
@@ -128,7 +158,17 @@ class AuthRepository {
 
   /// Refreshes the access token using the stored refresh token.
   /// Returns `true` if refresh was successful.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, ensures a dummy JWT is present
+  /// and returns `true`.
   Future<bool> refreshToken() async {
+    if (ApiConstants.useMockApi) {
+      final token = await _secureStorage.read(key: _accessTokenKey);
+      if (token != null && token.isNotEmpty) return true;
+      await _storeDummyTokens();
+      return true;
+    }
+
     try {
       final refreshToken = await _secureStorage.read(key: _refreshTokenKey);
       if (refreshToken == null || refreshToken.isEmpty) return false;
@@ -275,6 +315,17 @@ class AuthRepository {
     if (idToken != null) {
       await _secureStorage.write(key: _idTokenKey, value: idToken);
     }
+  }
+
+  /// Stores a dummy JWT in every token slot so that all token-reading
+  /// accessors and auth-state checks return valid data.
+  Future<void> _storeDummyTokens() async {
+    final token = DummyData.instance.generateJwt();
+    await _storeTokens(
+      accessToken: token,
+      refreshToken: token,
+      idToken: token,
+    );
   }
 
   Future<void> _clearTokens() async {

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../core/constants/api_constants.dart';
 import '../../core/network/dio_client.dart';
+import '../datasources/local/dummy_data.dart';
 import '../models/booking_dto.dart';
 
 /// Repository for handling booking operations.
@@ -11,9 +12,16 @@ class BookingRepository {
   /// Creates a new booking via the API.
   ///
   /// Returns the created [BookingResponseDto] if successful, `null` otherwise.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, appends the booking to the
+  /// in-memory store and returns the created response DTO.
   Future<BookingResponseDto?> createBooking(
     BookingRequestDto booking,
   ) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.createBooking(booking);
+    }
+
     try {
       final response = await DioClient.instance.post(
         ApiConstants.bookingPersist,
@@ -37,7 +45,14 @@ class BookingRepository {
   }
 
   /// Fetches all bookings for the currently authenticated client.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, returns the dummy bookings
+  /// for the current user (reflecting any in-memory status overrides).
   Future<List<BookingResponseDto>> getBookingsByClient() async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.getBookingsByClient();
+    }
+
     try {
       final response = await DioClient.instance.get(
         ApiConstants.bookingByClientId,
@@ -75,7 +90,14 @@ class BookingRepository {
   ///
   /// Sends a PUT request to the cancel endpoint.
   /// Returns `true` if the cancellation was successful.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, applies an in-memory status
+  /// override rather than sending a request.
   Future<bool> cancelBooking(String bookingId) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.cancelBooking(bookingId);
+    }
+
     try {
       final response = await DioClient.instance.put(
         ApiConstants.bookingCancel,
@@ -94,11 +116,18 @@ class BookingRepository {
   /// Reschedules a booking with a new [date] and [time].
   ///
   /// Returns `true` if the reschedule was successful.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, applies in-memory date/time
+  /// overrides rather than sending a request.
   Future<bool> rescheduleBooking(
     String bookingId,
     String date,
     String time,
   ) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.rescheduleBooking(bookingId, date, time);
+    }
+
     try {
       final response = await DioClient.instance.put(
         ApiConstants.bookingReschedule,
@@ -121,7 +150,14 @@ class BookingRepository {
   /// Marks a booking as completed by [bookingId].
   ///
   /// Returns `true` if the operation was successful.
+  ///
+  /// When [ApiConstants.useMockApi] is enabled, applies an in-memory status
+  /// override rather than sending a request.
   Future<bool> markComplete(String bookingId) async {
+    if (ApiConstants.useMockApi) {
+      return DummyData.instance.markComplete(bookingId);
+    }
+
     try {
       final response = await DioClient.instance.put(
         ApiConstants.bookingMarkComplete,

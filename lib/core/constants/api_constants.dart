@@ -6,6 +6,18 @@ class ApiConstants {
   ApiConstants._();
 
   // ──────────────────────────────────────────────
+  // Environment Switch
+  // ──────────────────────────────────────────────
+
+  /// When `true`, all data repositories return in-memory dummy data
+  /// instead of making real HTTP requests to the backend.
+  ///
+  /// This is useful for development and UI testing when the Spring Boot
+  /// API (and Keycloak) are not running. Flip to `false` to restore the
+  /// real backend calls.
+  static const bool useMockApi = true;
+
+  // ──────────────────────────────────────────────
   // Base URLs
   // ──────────────────────────────────────────────
 
